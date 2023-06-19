@@ -27,7 +27,6 @@ description:         This package provides a static blog generator
 
 dependencies:
 - base >= 4.7 && < 5
-- directory
 
 ghc-options:
 - -Wall
@@ -42,6 +41,8 @@ ghc-options:
 
 library:
   source-dirs: src
+  dependencies:
+  - directory
 
 executables:
   hs-blog-gen:
@@ -53,6 +54,8 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - hs-blog
+    - directory
+    - optparse-applicative
 
 tests:
   hs-blog-test:

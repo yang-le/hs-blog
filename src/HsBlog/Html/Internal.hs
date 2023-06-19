@@ -1,15 +1,30 @@
-module HsBlog.Html.Internal where
-import Numeric.Natural ( Natural )
+module HsBlog.Html.Internal
+  ( Html,
+    Title,
+    Structure,
+    html_,
+    p_,
+    h_,
+    ul_,
+    ol_,
+    code_,
+    render,
+  )
+where
+
+import Numeric.Natural (Natural)
 
 newtype Html = Html String
+
 newtype Structure = Structure String
+
 type Title = String
 
 instance Semigroup Structure where
-    (<>) (Structure c1) (Structure c2) = Structure (c1 <> c2)
+  (<>) (Structure c1) (Structure c2) = Structure (c1 <> c2)
 
 instance Monoid Structure where
-    mempty = empty_
+  mempty = empty_
 
 render :: Html -> String
 render (Html str) = str
@@ -18,10 +33,14 @@ empty_ :: Structure
 empty_ = Structure ""
 
 html_ :: Title -> Structure -> Html
-html_ title (Structure body) = Html
-    (el "html"
-        (el "head"
-            (el "title" (escape title)) <> el "body" body
+html_ title (Structure body) =
+  Html
+    ( el
+        "html"
+        ( el
+            "head"
+            (el "title" (escape title))
+            <> el "body" body
         )
     )
 
@@ -47,11 +66,12 @@ getStructureString :: Structure -> String
 getStructureString (Structure str) = str
 
 escape :: String -> String
-escape = concatMap escapeChar where
+escape = concatMap escapeChar
+  where
     escapeChar c = case c of
-        '<' -> "&lt;"
-        '>' -> "&gt;"
-        '&' -> "&amp;"
-        '"' -> "&quot;"
-        '\'' -> "&#39;"
-        _ -> [c]
+      '<' -> "&lt;"
+      '>' -> "&gt;"
+      '&' -> "&amp;"
+      '"' -> "&quot;"
+      '\'' -> "&#39;"
+      _ -> [c]
