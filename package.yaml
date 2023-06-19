@@ -1,0 +1,66 @@
+name:                hs-blog
+version:             0.1.0.0
+github:              yang-le/hs-blog
+license:             BSD-3-Clause
+author:              Gil Mizrahi
+maintainer:          gilmi@posteo.net
+copyright:           2023 Author name here
+
+extra-source-files:
+- README.md
+
+# Metadata used when publishing your package
+synopsis:            A custom blog generator from markup files
+category:            Learning, Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         This package provides a static blog generator
+                     from a custom markup format to HTML.
+                     It defines a parser for this custom markup format
+                     as well as an html pretty printer EDSL.
+
+                     It is used as the example project in the online book
+                     'Learn Haskell Blog Generator'. See the README for
+                     more details.
+
+dependencies:
+- base >= 4.7 && < 5
+- directory
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+
+library:
+  source-dirs: src
+
+executables:
+  hs-blog-gen:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hs-blog
+
+tests:
+  hs-blog-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hs-blog
