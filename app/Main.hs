@@ -5,7 +5,7 @@ where
 
 import HsBlog
 import OptParse
-import System.Directory (doesFileExist)
+import System.Directory (doesDirectoryExist, doesFileExist)
 import System.Exit (exitFailure)
 import System.IO
 
@@ -14,7 +14,7 @@ main = do
   options <- parse
   case options of
     ConvertDir input output replace -> do
-      exists <- doesFileExist output
+      exists <- doesDirectoryExist output
       shouldOpenFile <- if exists && not replace then confirm else pure True
       if shouldOpenFile then convertDirectory input output else exitFailure
     ConvertSingle input output replace -> do

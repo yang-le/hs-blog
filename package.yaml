@@ -43,6 +43,7 @@ library:
   source-dirs: src
   dependencies:
   - directory
+  - filepath
 
 executables:
   hs-blog-gen:
