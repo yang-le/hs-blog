@@ -6,14 +6,15 @@ where
 
 import HsBlog.Convert (convert)
 import HsBlog.Directory
+import HsBlog.Env (Env)
 import HsBlog.Html
 import HsBlog.Markup
 import System.IO
 
-convertSingle :: Title -> Handle -> Handle -> IO ()
-convertSingle title input output = do
+convertSingle :: Env -> String -> Handle -> Handle -> IO ()
+convertSingle env title input output = do
   content <- hGetContents input
-  hPutStrLn output (process title content)
+  hPutStrLn output (process env title content)
 
-process :: Title -> String -> String
-process title = render . convert title . parse
+process :: Env -> String -> String -> String
+process env title = render . convert env title . parse

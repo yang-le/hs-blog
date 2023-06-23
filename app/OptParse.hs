@@ -7,11 +7,12 @@ module OptParse
 where
 
 import Data.Maybe (fromMaybe)
+import HsBlog.Env
 import Options.Applicative
 
 data Options
-  = ConvertSingle SingleInput SingleOutput Bool
-  | ConvertDir FilePath FilePath Bool
+  = ConvertSingle SingleInput SingleOutput Bool Env
+  | ConvertDir FilePath FilePath Bool Env
   deriving (Show)
 
 data SingleInput = Stdin | InputFile FilePath deriving (Show)
@@ -54,8 +55,33 @@ pReplaceFile =
         <> help "Replace exists output file"
     )
 
+pBlogName :: Parser String
+pBlogName =
+  strOption
+    ( long "name"
+        <> short 'n'
+        <> metavar "STRING"
+        <> help "Blog name"
+        <> value (eBlogName defaultEnv)
+        <> showDefault
+    )
+
+pStylesheetPath :: Parser FilePath
+pStylesheetPath =
+  strOption
+    ( long "style"
+        <> short 's'
+        <> metavar "FILE"
+        <> help "Stylesheet path"
+        <> value (eStylesheetPath defaultEnv)
+        <> showDefault
+    )
+
+pEnv :: Parser Env
+pEnv = Env <$> pBlogName <*> pStylesheetPath
+
 pConvertSingle :: Parser Options
-pConvertSingle = ConvertSingle <$> pSingleInput <*> pSingleOutput <*> pReplaceFile
+pConvertSingle = ConvertSingle <$> pSingleInput <*> pSingleOutput <*> pReplaceFile <*> pEnv
 
 pInputDir :: Parser FilePath
 pInputDir =
@@ -84,7 +110,7 @@ pReplaceDir =
     )
 
 pConvertDir :: Parser Options
-pConvertDir = ConvertDir <$> pInputDir <*> pOutputDir <*> pReplaceDir
+pConvertDir = ConvertDir <$> pInputDir <*> pOutputDir <*> pReplaceDir <*> pEnv
 
 pOptions :: Parser Options
 pOptions =

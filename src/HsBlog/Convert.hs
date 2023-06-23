@@ -4,11 +4,12 @@ module HsBlog.Convert
   )
 where
 
+import HsBlog.Env (Env (eBlogName, eStylesheetPath))
 import HsBlog.Html
 import HsBlog.Markup
 
-convert :: Title -> Document -> Html
-convert title = html_ title . foldMap convertStructure
+convert :: Env -> String -> Document -> Html
+convert env title = html_ (title_ (eBlogName env <> " - " <> title) <> stylesheet_ (eStylesheetPath env)) . foldMap convertStructure
 
 convertStructure :: HsBlog.Markup.Structure -> HsBlog.Html.Structure
 convertStructure structure = case structure of

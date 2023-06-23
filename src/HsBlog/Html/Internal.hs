@@ -1,6 +1,6 @@
 module HsBlog.Html.Internal
   ( Html,
-    Title,
+    Head,
     Structure,
     Content,
     html_,
@@ -12,6 +12,9 @@ module HsBlog.Html.Internal
     txt_,
     link_,
     image_,
+    stylesheet_,
+    title_,
+    meta_,
     render,
   )
 where
@@ -24,7 +27,7 @@ newtype Structure = Structure String
 
 newtype Content = Content String
 
-type Title = String
+newtype Head = Head String
 
 instance Semigroup Structure where
   (<>) (Structure c1) (Structure c2) = Structure (c1 <> c2)
@@ -38,20 +41,24 @@ instance Semigroup Content where
 instance Monoid Content where
   mempty = Content ""
 
+instance Semigroup Head where
+  (<>) (Head c1) (Head c2) = Head (c1 <> c2)
+
+instance Monoid Head where
+  mempty = Head ""
+
 getStructureString :: Structure -> String
 getStructureString (Structure str) = str
 
 render :: Html -> String
 render (Html str) = str
 
-html_ :: Title -> Structure -> Html
-html_ title (Structure body) =
+html_ :: Head -> Structure -> Html
+html_ (Head head) (Structure body) =
   Html
     ( el
         "html"
-        ( el
-            "head"
-            (el "title" (escape title))
+        ( el "head" head
             <> el "body" body
         )
     )
@@ -81,7 +88,16 @@ link_ :: FilePath -> Content -> Content
 link_ href (Content c) = Content ("<a href=\"" <> escape href <> "\">" <> escape c <> "</a>")
 
 image_ :: FilePath -> Content
-image_ src = Content ("<img src=\"" <> escape src <> " />")
+image_ src = Content ("<img src=\"" <> escape src <> "\" />")
+
+title_ :: String -> Head
+title_ = Head . el "title" . escape
+
+stylesheet_ :: FilePath -> Head
+stylesheet_ src = Head ("<link rel=\"stylesheet\" type=\"text/css\" href=\"" <> escape src <> "\" />")
+
+meta_ :: String -> String -> Head
+meta_ name content = Head ("<meta name=\"" <> escape name <> "\" content=\"" <> escape content <> "\" />")
 
 escape :: String -> String
 escape = concatMap escapeChar

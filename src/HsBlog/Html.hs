@@ -1,6 +1,6 @@
 module HsBlog.Html
   ( Html,
-    Title,
+    Head,
     Structure,
     Content,
     html_,
@@ -12,6 +12,9 @@ module HsBlog.Html
     txt_,
     link_,
     image_,
+    stylesheet_,
+    title_,
+    meta_,
     render,
   )
 where

@@ -13,11 +13,11 @@ main :: IO ()
 main = do
   options <- parse
   case options of
-    ConvertDir input output replace -> do
+    ConvertDir input output replace env -> do
       exists <- doesDirectoryExist output
       shouldOpenFile <- if exists && not replace then confirm else pure True
-      if shouldOpenFile then convertDirectory input output else exitFailure
-    ConvertSingle input output replace -> do
+      if shouldOpenFile then convertDirectory env input output else exitFailure
+    ConvertSingle input output replace env -> do
       (title, inputHandle) <- case input of
         Stdin -> pure ("", stdin)
         InputFile file -> (,) file <$> openFile file ReadMode
@@ -27,7 +27,7 @@ main = do
           exists <- doesFileExist file
           shouldOpenFile <- if exists && not replace then confirm else pure True
           if shouldOpenFile then openFile file WriteMode else exitFailure
-      convertSingle title inputHandle outputHandle
+      convertSingle env title inputHandle outputHandle
       hClose inputHandle
       hClose outputHandle
 

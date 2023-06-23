@@ -9,6 +9,7 @@ import Control.Monad (void, when)
 import Data.List (partition)
 import Data.Traversable (for)
 import HsBlog.Convert (convert, convertStructure)
+import HsBlog.Env (Env (eBlogName, eStylesheetPath))
 import HsBlog.Html
 import HsBlog.Markup
 import System.Directory
@@ -32,10 +33,10 @@ data DirContents = DirContents
     dcFilesToCopy :: [FilePath]
   }
 
-buildIndex :: [(FilePath, Document)] -> Html
-buildIndex list =
+buildIndex :: Env -> [(FilePath, Document)] -> Html
+buildIndex env list =
   html_
-    "Blog"
+    (title_ (eBlogName env) <> stylesheet_ (eStylesheetPath env))
     ( h_ 1 (link_ "index.html" (txt_ "Blog"))
         <> h_ 2 (txt_ "Posts")
         <> foldMap buildIndexEntry list
@@ -49,11 +50,11 @@ buildIndexEntry (path, doc) = case doc of
       <> p_ (link_ path (txt_ "..."))
   _ -> h_ 3 (link_ path (txt_ path))
 
-convertDirectory :: FilePath -> FilePath -> IO ()
-convertDirectory inputDir outputDir = do
+convertDirectory :: Env -> FilePath -> FilePath -> IO ()
+convertDirectory env inputDir outputDir = do
   DirContents filesToProcess filesToCopy <- getDirFilesAndContent inputDir
   createOutputDirectory outputDir
-  let outputHtmls = txtsToRenderedHtml filesToProcess
+  let outputHtmls = txtsToRenderedHtml env filesToProcess
   copyFiles outputDir filesToCopy
   writeFiles outputDir outputHtmls
   putStrLn "Done."
@@ -109,19 +110,19 @@ createOutputDirectory dir = do
   when dirExists (removeDirectoryRecursive dir)
   createDirectory dir
 
-txtsToRenderedHtml :: [(FilePath, String)] -> [(FilePath, String)]
-txtsToRenderedHtml input = index : documentToRenderedHtml docs
+txtsToRenderedHtml :: Env -> [(FilePath, String)] -> [(FilePath, String)]
+txtsToRenderedHtml env input = index : documentToRenderedHtml env docs
   where
-    index = ("index.html", render (buildIndex docs))
+    index = ("index.html", render (buildIndex env docs))
     docs = txtsToDocument input
 
 txtsToDocument :: [(FilePath, String)] -> [(FilePath, Document)]
 txtsToDocument = map $ \(file, content) ->
   (takeBaseName file <.> "html", parse content)
 
-documentToRenderedHtml :: [(FilePath, Document)] -> [(FilePath, String)]
-documentToRenderedHtml = map $ \(file, doc) ->
-  (file, render (convert file doc))
+documentToRenderedHtml :: Env -> [(FilePath, Document)] -> [(FilePath, String)]
+documentToRenderedHtml env = map $ \(file, doc) ->
+  (file, render (convert env file doc))
 
 copyFiles :: FilePath -> [FilePath] -> IO ()
 copyFiles outputDir files = do

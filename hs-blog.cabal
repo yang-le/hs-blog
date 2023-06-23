@@ -30,6 +30,7 @@ library
       HsBlog
       HsBlog.Convert
       HsBlog.Directory
+      HsBlog.Env
       HsBlog.Html
       HsBlog.Html.Internal
       HsBlog.Markup
