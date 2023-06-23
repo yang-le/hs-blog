@@ -64,10 +64,11 @@ executable hs-blog-gen
     , optparse-applicative
   default-language: Haskell2010
 
-test-suite hs-blog-test
+test-suite hs-blog-gen-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      MarkupParsingSpec
       Paths_hs_blog
   autogen-modules:
       Paths_hs_blog
@@ -77,4 +78,7 @@ test-suite hs-blog-test
   build-depends:
       base >=4.7 && <5
     , hs-blog
+    , hspec
+    , hspec-discover
+    , raw-strings-qq
   default-language: Haskell2010

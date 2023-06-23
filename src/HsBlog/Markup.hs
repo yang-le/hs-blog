@@ -40,10 +40,10 @@ parseLines context txts = case txts of
         maybe id (:) context (parseLines (Just (OrderedList [trim line])) rest)
   ('>' : ' ' : line) : rest ->
     case context of
-      Just (CodeBlock list) ->
-        parseLines (Just (CodeBlock (list <> [trim line]))) rest
+      Just (CodeBlock code) ->
+        parseLines (Just (CodeBlock (code <> [line]))) rest
       _ ->
-        maybe id (:) context (parseLines (Just (CodeBlock [trim line])) rest)
+        maybe id (:) context (parseLines (Just (CodeBlock [line])) rest)
   currentLine : rest ->
     if line == ""
       then maybe id (:) context (parseLines Nothing rest)
